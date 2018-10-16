@@ -33,4 +33,16 @@ void ISRsw(int sig){
 }
 
 
-//Con KILL se mandan señales (entre ellas una para matar procesos)
+/*
+Las señales son interrupciones por software 
+Es una forma de comunicación entre procesos (IPC)
+
+SIGINT = ^C
+SIGTERM = ^Z
+
+Proceso padre
+se comunicará con procesos hijos mediante señales
+
+Con KILL se mandan señales (entre ellas una para matar procesos)
+kill(pid, sig)
+*/
