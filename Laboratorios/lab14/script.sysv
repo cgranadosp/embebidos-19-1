@@ -1,0 +1,65 @@
+#!/bin/bash
+
+#el usuario teclea script y la opción que desea ejecutar: start, stop, status
+#$ porque recibe un parámetro
+#$0 regresa el nombre del script
+PATH_PID=/var/run/demonio.pid
+
+verifica() {
+    if [ -e $PATH_PID ] ; then 
+        MI_PID=$(cat $PATH_PID)
+        if [ -d /proc/$MI_PID ] ; then
+            echo "El demonio está en ejecución"
+
+            return 0; # si se retorna 0 significa exito
+        fi
+    fi
+
+    echo "No existe el archivo pid"
+    return 1 #significa que hubo un error
+}
+
+case $1 in
+    start)
+        echo "Opción de start"
+        if verifica ; then 
+            echo "El demonio está en ejecución..."
+        else
+            echo "Ejecutando demonio"
+            /usr/local/bin/servidor
+        fi
+    ;;
+
+    stop)
+        echo "Opción de stop"
+        MI_PID=$(cat $PATH_PID)
+
+        if verifica ; then 
+            echo "Deteniendo demonio"
+            kill -SIGTERM $MI_PID
+        else 
+            echo "El demonio no está en ejecución"
+        fi
+        
+        # el pid del proceso puede tomarse del archivo que genera nuestro demonio
+        # también podría buscarse el pid por nombre: ps -e | grep mi_demonio
+    ;;
+
+    status)
+        echo "Opción de status"
+        MI_PID=$(cat $PATH_PID)
+
+        if verifica ; then
+            echo "Demonio $MI_PID en ejecución (OK)"
+        else
+            echo "Demonio no está en ejecución..."
+        fi
+    ;;
+
+    *)
+        echo "Sintaxis de ejecución: $0 [start|stop|status]"
+    ;;
+
+esac
+
+# Se tiene una carpeta /proc en la que se guardan 
